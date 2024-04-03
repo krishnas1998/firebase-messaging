@@ -1,4 +1,7 @@
 const https = require('https');
+const FIREBASE_MESSAGING_TIMEOUT = 15000;
+
+https.globalAgent.keepAlive = true;
 
 function parseIfJSON(responseBody) {
   try {
@@ -18,7 +21,8 @@ function sendRequest(url, method, accessToken, data) {
         'Authorization': `Bearer ${accessToken}`,
         'access_token_auth': true,
         'Content-Type': 'application/json',
-      }
+      },
+      timeout: FIREBASE_MESSAGING_TIMEOUT, 
     };
 
     const req = https.request(url, options, (res) => {
@@ -31,13 +35,12 @@ function sendRequest(url, method, accessToken, data) {
           status: res.statusCode,
           data: parseIfJSON(responseBody)
         };
-        // console.log(response, 'response')
         resolve(response);
       });
     });
 
     req.on('error', (error) => {
-      reject(error);
+      reject(error.error);
     });
 
     req.write(jsonData);
