@@ -72,9 +72,14 @@ Payload for sending messages via FCM.
   apns?: ApnsConfig;
   fcmOptions?: FcmOptions;
 }
+```
+
+For more details, refer to the [Firebase Admin Node SDK Messaging API documentation](https://github.com/firebase/firebase-admin-node/blob/837b69b61b3df3dcd8a31ccd16062e1bba236dca/src/messaging/messaging-api.ts).
 
 
+# Test case coverage status
 
+```test coverage status
 ---------------|---------|----------|---------|---------|-------------------
 File           | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 ---------------|---------|----------|---------|---------|-------------------
@@ -85,3 +90,5 @@ All files      |   94.44 |       70 |    90.9 |   94.36 |
   request.js   |   92.85 |      100 |   88.88 |   92.85 | 10,43             
   validator.js |     100 |      100 |     100 |     100 |                   
 ---------------|---------|----------|---------|---------|-------------------
+
+```
