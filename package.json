@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Firebase messaging minimal SDK for Node.js",
   "main": "index.js",
+  "engines": {
+    "node": ">=10"
+  },
   "scripts": {
     "test": "mocha test --recursive -R spec --coverage",
     "coverage": "nyc npm run test"
@@ -18,7 +21,7 @@
     "Android",
     "iOS"
   ],
-  "author": "Krishna Sharma <mr.krishnas1997@gmai.com>",
+  "author": "Krishna Sharma <mr.krishnas1997@gmail.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/krishnas1998/firebase-messaging/issues"
