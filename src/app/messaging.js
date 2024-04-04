@@ -1,11 +1,7 @@
 const request = require('../util/request');
 const validator = require('../util/validator')
+const apiConstants = require('../constants/apiConstants')
 
-const FCM_SEND_HOST = 'fcm.googleapis.com';
-const FCM_TOPIC_MANAGEMENT_HOST = 'iid.googleapis.com';
-const FCM_TOPIC_MANAGEMENT_ADD_PATH = '/iid/v1:batchAdd';
-const FCM_TOPIC_MANAGEMENT_REMOVE_PATH = '/iid/v1:batchRemove';
-const MESSAGING_HTTP_METHOD = 'POST';
 
 /**
  * Payload for the FCM messaging operation.
@@ -72,12 +68,12 @@ function getUrlPath(projectId) {
  */
 function send(projectId, accessToken, message, dryRun) {
   const urlPath = getUrlPath(projectId);
-  const url = `https://${FCM_SEND_HOST}${urlPath}`;
+  const url = `${apiConstants.FCM.SEND_HOST}${urlPath}`;
   const data = { message };
   if (dryRun) {
     data.validate_only = true;
   }
-  return request.sendRequestForSendResponse(url, MESSAGING_HTTP_METHOD, accessToken, data);
+  return request.sendRequestForSendResponse(url, apiConstants.HTTP_METHOD.POST, accessToken, data);
 }
 
 /**
@@ -99,13 +95,13 @@ function send(projectId, accessToken, message, dryRun) {
 */
 function sendEach(projectId, accessToken, messages, dryRun) {
   const urlPath = getUrlPath(projectId);
-  const url = `https://${FCM_SEND_HOST}${urlPath}`;
+  const url = `${apiConstants.FCM.SEND_HOST}${urlPath}`;
   const requests = messages.map((message) => {
     const data = { message };
     if (dryRun) {
       data.validate_only = true;
     }
-    return request.sendRequestForSendResponse(url, MESSAGING_HTTP_METHOD, accessToken, data);
+    return request.sendRequestForSendResponse(url, apiConstants.HTTP_METHOD.POST, accessToken, data);
   });
   
   return Promise.all(requests)
@@ -184,8 +180,8 @@ function sendTopicManagementRequest(accessToken, registrationTokenOrTokens, topi
     to: topic,
     registration_tokens: registrationTokensArray,
   };
-  const url = `https://${FCM_TOPIC_MANAGEMENT_HOST}${path}`;
-  return request.sendRequest(url, MESSAGING_HTTP_METHOD, accessToken, data);
+  const url = `${apiConstants.FCM.TOPIC_MANAGEMENT_HOST}${path}`;
+  return request.sendRequest(url, apiConstants.HTTP_METHOD.POST, accessToken, data);
 }
 
 /**
@@ -205,7 +201,7 @@ function sendTopicManagementRequest(accessToken, registrationTokenOrTokens, topi
 *   subscribed to the topic.
 */
 function subscribeToTopic(accessToken, registrationTokenOrTokens, topic) {
-  const path = FCM_TOPIC_MANAGEMENT_ADD_PATH;
+  const path = apiConstants.FCM.TOPIC_MANAGEMENT_ADD_PATH;
   return sendTopicManagementRequest(accessToken, registrationTokenOrTokens, topic, path);
 }
 
@@ -226,7 +222,7 @@ function subscribeToTopic(accessToken, registrationTokenOrTokens, topic) {
 *   unsubscribed from the topic.
 */
 function unsubscribeFromTopic(accessToken, registrationTokenOrTokens, topic) {
-  const path = FCM_TOPIC_MANAGEMENT_REMOVE_PATH;
+  const path = apiConstants.FCM.TOPIC_MANAGEMENT_REMOVE_PATH;
   return sendTopicManagementRequest(accessToken, registrationTokenOrTokens, topic, path);
 
 }
