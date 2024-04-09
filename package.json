@@ -1,5 +1,5 @@
 {
-  "name": "firebase-messaging",
+  "name": "firebase-messaging-minimal",
   "version": "1.0.0",
   "description": "Firebase messaging minimal SDK for Node.js",
   "main": "index.js",
