@@ -11,7 +11,7 @@ const private_key = key.private_key;
 
 const projectId = key.project_id;
 
-const topicName = '/topics/FCM_7647_10_2';
+const topicName = '/topics/FCM_2787_10_1';
 
 const data = {
   "topic": "news",

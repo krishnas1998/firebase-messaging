@@ -11,22 +11,23 @@ function parseIfJSON(responseBody) {
   }
 }
 
-function sendRequest(url, method, accessToken, data) {
+function sendRequest(host, path, method, accessToken, data) {
   return new Promise((resolve, reject) => {
     const jsonData = JSON.stringify(data);
-
     const options = {
-      method: method,
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'access_token_auth': true,
         'Content-Type': 'application/json',
       },
-      timeout: FIREBASE_MESSAGING_TIMEOUT, 
-    };
-
-    const req = https.request(url, options, (res) => {
+      timeout: FIREBASE_MESSAGING_TIMEOUT,
+      method,
+      host,
+      path,
+    }
+    const req = https.request(options, (res) => {
       let responseBody = '';
+      res.setEncoding('utf8');
       res.on('data', (chunk) => {
         responseBody += chunk;
       });
@@ -61,8 +62,8 @@ function buildSendResponse(response) {
   return result;
 }
 
-async function sendRequestForSendResponse(url, method, accessToken, data) {
-  const response = await sendRequest(url, method, accessToken, data);
+async function sendRequestForSendResponse(host, path, method, accessToken, data) {
+  const response = await sendRequest(host, path, method, accessToken, data);
   return buildSendResponse(response);
 }
 
