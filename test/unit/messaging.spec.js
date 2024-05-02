@@ -65,8 +65,9 @@ describe('Messaging Functions', () => {
 
       const response = await messaging.send(projectId, accessToken, data, dryRun);
 
-      expect(response).to.have.property('success');
-      expect(response.success).to.be.true;
+      expect(response).to.have.property('data');
+      expect(response).to.have.property('status');
+      expect(response.status).to.be.eq(200);
     });
 
     it('should not send a message with incorrect access token', async () => {
@@ -81,11 +82,13 @@ describe('Messaging Functions', () => {
       const dryRun = true;
 
 
-      const response = await messaging.send(projectId, accessToken, data, dryRun);
-      console.log('response error', response.err)
-      expect(response).to.have.property('success');
-      expect(response.success).to.be.false;
-      expect(response.success).to.be.false;
+      try {
+        const response = await messaging.send(projectId, accessToken, data, dryRun);
+      } catch (error) {
+        expect(error).to.have.property('code');
+        expect(error.code).to.be.eq('authentication-error');
+        expect(error).to.have.property('message');
+      }
     });
   });
 

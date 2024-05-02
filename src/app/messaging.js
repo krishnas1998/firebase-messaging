@@ -80,7 +80,7 @@ function send(projectId, accessToken, message, dryRun) {
   if (dryRun) {
     data.validate_only = true;
   }
-  return request.sendRequestForSendResponse(apiConstants.FCM.SEND_HOST, urlPath, apiConstants.HTTP_METHOD.POST, accessToken, data);
+  return request.sendRequestWithErrorCheck(apiConstants.FCM.SEND_HOST, urlPath, apiConstants.HTTP_METHOD.POST, accessToken, data);
 }
 
 /**
@@ -186,7 +186,7 @@ function sendTopicManagementRequest(accessToken, registrationTokenOrTokens, topi
     to: topic,
     registration_tokens: registrationTokensArray,
   };
-  return request.sendRequest(apiConstants.FCM.TOPIC_MANAGEMENT_HOST, path, apiConstants.HTTP_METHOD.POST, accessToken, data);
+  return request.sendRequestWithErrorCheck(apiConstants.FCM.TOPIC_MANAGEMENT_HOST, path, apiConstants.HTTP_METHOD.POST, accessToken, data);
 }
 
 /**
