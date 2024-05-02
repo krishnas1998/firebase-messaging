@@ -1,15 +1,11 @@
 const https = require('https');
+const messagingErrorInternal = require('../app/messagin-error-internal');
+const { parseJSON } = require('../util/helper');
+const { HttpError } = require('../util/apiRequest');
+
 const FIREBASE_MESSAGING_TIMEOUT = 15000;
 
 https.globalAgent.keepAlive = true;
-
-function parseIfJSON(responseBody) {
-  try {
-    return JSON.parse(responseBody);
-  } catch (error) {
-    return responseBody;
-  }
-}
 
 function sendRequest(host, path, method, accessToken, data) {
   return new Promise((resolve, reject) => {
@@ -32,11 +28,16 @@ function sendRequest(host, path, method, accessToken, data) {
         responseBody += chunk;
       });
       res.on('end', () => {
-        const response = {
-          status: res.statusCode,
-          data: parseIfJSON(responseBody)
-        };
-        resolve(response);
+        try {
+          const responseData = parseJSON(responseBody);
+          const response = {
+            status: res.statusCode,
+            data: responseData
+          };
+          resolve(response);
+        } catch (error) {
+          reject(new HttpError(responseBody))
+        }
       });
     });
 
@@ -57,17 +58,48 @@ function buildSendResponse(response) {
   if (result.success) {
     result.messageId = response.data && response.data.name;
   } else {
-    result.error = response;
+    result.error = messagingErrorInternal.createFirebaseError(response.status, response.data && response.data.message, response);
   }
   return result;
 }
 
 async function sendRequestForSendResponse(host, path, method, accessToken, data) {
-  const response = await sendRequest(host, path, method, accessToken, data);
-  return buildSendResponse(response);
+  try {
+    const response = await sendRequest(host, path, method, accessToken, data);
+    return buildSendResponse(response);
+  } catch (error) {
+    if (error instanceof HttpError) {
+      throw {
+        success: false,
+        error: messagingErrorInternal.createFirebaseError(error.status, error.message, error)
+      };
+    }
+    throw error;
+  }
+}
+
+async function sendRequestWithErrorCheck(host, path, method, accessToken, data) {
+  try {
+    const response = await sendRequest(host, path, method, accessToken, data);
+    const responseData = response.data;
+    const errorCode = messagingErrorInternal.getErrorCode(responseData);
+    if (errorCode) {
+      const error = messagingErrorInternal.createFirebaseError(response.status, responseData.error.message,  responseData.error)
+      throw (error);
+    }
+    return response;
+  } catch (error) {
+    if (error instanceof HttpError) {
+      throw {
+        success: false,
+        error: messagingErrorInternal.createFirebaseError(error.status, error.message, error)
+      };
+    }
+    throw error;
+  }
 }
 
 module.exports = {
-  sendRequest,
-  sendRequestForSendResponse
+  sendRequestForSendResponse,
+  sendRequestWithErrorCheck,
 };

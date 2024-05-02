@@ -14,11 +14,18 @@ const projectId = key.project_id;
 const topicName = '/topics/FCM_2787_10_1';
 
 const data = {
-  "topic": "news",
   "notification": {
     "title": "Breaking News",
     "body": "New news story available."
   },
+  data: {
+    customId: 'ABC123',
+    customType: 'red',
+    imageUrl: 'https://google.com',
+    notificationId: 'eb0a16d1-837e-4d48-a8c1-e44f2a27c0c7',
+    userId: "1234"
+  },
+  token: 'fyVstV7VTZKoRwa-l-ejtW:APA91bGq7DmyS0aVGKLI_Xe7B9MaIPH9yQa0XX-ZsmYtW9sRj9RitRM6YRCu4moFGbEaLOv7smXRvHqEww9pZ_u27sEluzTYRQRU1ZfEFEovQdHV0IgaADCG-GtIuULthhNUhVH5oW1h'
 }
 
 const multicastMessage = {
@@ -69,7 +76,7 @@ async function sendNotification() {
   }
 }
 
-// sendNotification();
+sendNotification();
 
 
 
